@@ -1,6 +1,7 @@
+
 Ball = class{
     constructor(a){
-        this.angle=-120;
+        this.angle=a;
         this.x = canvas.width/2;
         this.y = canvas.height/2;
         this.v = 3;
@@ -16,17 +17,19 @@ Ball = class{
 
 
     move(bricks){
-        for(let i = 0; i<bricks.length; i++){
-            this.collision(bricks[i]);
-        }
+
+        this.draw()
         this.vx = this.v * Math.cos(degToRad(this.angle));
         this.vy = this.v * Math.sin(degToRad(this.angle));
         this.x+=this.vx;
         this.y+=this.vy;
-        this.draw()
+
         this.bound = []
-        for(let x = 0; x<360; x++){
-            this.bound.push({x: this.r * Math.cos(degToRad(x))+this.x, y: this.r * Math.sin(degToRad(x))+this.y})
+        for(let x = 0; x<36; x++){
+            this.bound.push({x: this.r * Math.cos(degToRad(x*10))+this.x, y: this.r * Math.sin(degToRad(x*10))+this.y})
+        }
+        for(let i = 0; i<bricks.length; i++){
+            this.collision(bricks[i]);
         }
     }
 
@@ -36,8 +39,12 @@ Ball = class{
         ctx.fillStyle = this.color;
         ctx.fill();
         ctx.closePath();
-        for(let x = 0; x<360; x++){
-            this.bound.push({x: this.r * Math.cos(degToRad(x))+this.x, y: this.r * Math.sin(degToRad(x))+this.y})
+        for(let x = 0; x<36; x++){
+            this.bound.push({x: this.r * Math.cos(degToRad(x*10))+this.x, y: this.r * Math.sin(degToRad(x*10))+this.y})
+        }
+        for(let i in this.bound){
+            ctx.fillStyle = "black";
+            ctx.fillRect(this.bound[i].x,this.bound[i].y,1,1)
         }
     }
 
@@ -64,25 +71,28 @@ Ball = class{
                 points.push(point);
             }
         }
-        let contact = points[Math.floor(points.length/2)]
+        let contact = 0;
+        if(points.includes(this.bound[0])){
+            contact = points[0]
+        }
+        else{
+            contact = points[Math.floor(points.length/2)]
+        }
         if(contact!=undefined){
+            console.log(points);
+            console.log(this.x,this.y);
             let xVector = this.x-contact.x;
             let yVector = this.y-contact.y;
+            console.log(xVector,yVector)
             let bounceA = radToDeg(Math.atan(yVector/xVector));
+            if(String(bounceA)==="-0"){
+                bounceA = 180;
+            }
             let bounceX = this.v * Math.cos(degToRad(bounceA));
             let bounceY = this.v * Math.sin(degToRad(bounceA));
-            console.log(bounceX,bounceY, this.vx, this.vy)
-            xVector = this.vx + 2*this.vx*(0-(bounceX/this.v));
-            yVector = this.vy + 2*this.vy*(0-(bounceY/this.v));
-            console.log(xVector,yVector)
+            this.angle=(radToDeg(Math.atan(bounceY/bounceX)))
 
-
-
-            this.angle = radToDeg(Math.atan(yVector/xVector));
-            this.vx = this.v * Math.cos(degToRad(this.angle));
-            this.vy = this.v * Math.sin(degToRad(this.angle));
-            
-            console.log(this.angle);
+            console.log(String(bounceA));
             //            this.angle=bounceA;
             console.log("")
         }
