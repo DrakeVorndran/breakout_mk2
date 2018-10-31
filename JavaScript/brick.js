@@ -1,11 +1,16 @@
+
 Brick = class{
-    constructor(x,y,w,h){
+    constructor(x,y,w,h,l){
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
-        this.color = "red";
+        this.l = l;
         this.bound = [];
+        this.colors = ["red","orange","yellow","green","blue","purple"]
+        this.color = this.colors[this.l];
+        this.solid = true;
+
         for(let x = this.x; x<this.x+this.w+1; x++){
             this.bound.push({ x: x, y: this.y});
             this.bound.push({ x: x, y: this.y+this.h});
@@ -15,13 +20,15 @@ Brick = class{
             this.bound.push({ x: this.x+this.w, y: y});
         }
     }
-    
+
     draw(){
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x,this.y,this.w,this.h);
-        for(let i in this.bound){
-            ctx.fillStyle = "black";
-            ctx.fillRect(this.bound[i].x,this.bound[i].y,1,1);
+        if(this.l<0){
+            this.solid = false;
+        }
+        if(this.solid){
+            this.color = this.colors[this.l];
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x,this.y,this.w,this.h);
         }
     }
 }

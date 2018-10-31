@@ -1,43 +1,48 @@
 
 Ball = class{
-    constructor(a){
-        this.numP = 8;
+    constructor(a,v){
+        this.numP = 36;
         this.angle=a;
         this.x = canvas.width/2;
         this.y = canvas.height/2;
-        this.v = 3;
+        this.v = 2;
         this.vx = this.v * Math.cos(degToRad(this.angle));
         this.vy = this.v * Math.sin(degToRad(this.angle));
         this.r = 10;
         this.color = "blue";
         this.bound = []
         this.calcBound();
-        console.log(this.bound)
     }
 
 
     calcBound(){
         this.bound = []
         for(let x = 0; x<this.numP; x++){
-            this.bound.push({x: Math.floor(this.r * Math.cos(degToRad((x/this.numP)*360)))+this.x, y: Math.floor(this.r * Math.sin(degToRad((x/this.numP)*360)))+this.y})
-            
+            this.bound.push({x: Math.floor(this.r * Math.cos(degToRad((x/this.numP)*360)))+this.x, y: Math.floor(this.r * Math.sin(degToRad((x/this.numP)*360)))+this.y, a: (x/this.numP)*360})
+
         }
-        
+
+    }
+
+    checkCollision(bricks){
+        this.wallCollision();
+        for(let i = 0; i<bricks.length; i++){
+            this.collision(bricks[i]);
+        }
     }
 
 
     move(bricks){
 
-        this.draw()
         this.vx = this.v * Math.cos(degToRad(this.angle));
         this.vy = this.v * Math.sin(degToRad(this.angle));
         this.x+=this.vx;
         this.y+=this.vy;
-
         this.calcBound();
-        for(let i = 0; i<bricks.length; i++){
-            this.collision(bricks[i]);
-        }
+        this.checkCollision(bricks);
+
+        this.draw()
+
     }
 
     draw(){
@@ -68,40 +73,35 @@ Ball = class{
 
 
     collision(brick){
-        this.wallCollision();
-        let points = []
-        for(let i in this.bound){
-            let point = this.bound[i];
-            if(!(point.x < brick.x || point.y < brick.y || point.x > brick.x + brick.w || point.y > brick.y+brick.h)){
-                points.push(point);
+        if(brick.solid){
+            let points = []
+            for(let i in this.bound){
+                let point = this.bound[i];
+                if(!(point.x < brick.x || point.y < brick.y || point.x > brick.x + brick.w || point.y > brick.y+brick.h)){
+                    points.push(point);
+                }
             }
-        }
-        let contact = 0;
-        if(points.includes(this.bound[0])){
-            contact = points[0]
-        }
-        else{
-            contact = points[Math.floor(points.length/2)]
-        }
-        if(contact!=undefined){
-            console.log(points);
-            console.log(this.x,this.y);
-            let xVector = this.x-contact.x;
-            let yVector = this.y-contact.y;
-            console.log(xVector,yVector)
-            let bounceA = radToDeg(Math.atan(yVector/xVector));
-            if(String(bounceA)==="-0"){
-                bounceA = 180;
+            let contact = 0;
+            if(points.includes(this.bound[0])){
+                contact = points[0]
             }
-            let bounceX = this.v * Math.cos(degToRad(bounceA));
-            let bounceY = this.v * Math.sin(degToRad(bounceA));
-            this.angle=(radToDeg(Math.atan(bounceY/bounceX)))
+            else{
+                contact = points[Math.floor(points.length/2)]
+            }
+            if(contact!=undefined){
+                brick.l--;
+                let bounceA = (contact.a+180)%360;
+                //            this.angle= bounceA;
+                //            console.log(this.vx*Math.cos(degToRad(bounceA)))
+                //            this.angle = Math.tan(this.vy/this.vx);
+                let vector = contact.a - this.angle;
+                this.angle = bounceA+vector;
 
-            console.log(String(bounceA));
-            //            this.angle=bounceA;
-            console.log("")
+
+
+            }
+
         }
-
     }
 
 

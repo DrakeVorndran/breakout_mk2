@@ -11,17 +11,31 @@ radToDeg = (rad) => {
 }
 
 
+const brickHeight = 20;
+const brickWidth = 50;
+const brickPadding = 10;
+const brickRows = Math.floor(canvas.width/(brickWidth+brickPadding));
+const brickCol = Math.floor((canvas.height/(brickHeight+brickPadding))/2.5);
+const bricks = [];
+for(let x = 0; x<brickRows; x++){
+    for(let y = 0; y<brickCol; y++){
+        bricks.push(new Brick(x*(brickWidth+brickPadding)+brickPadding,y*(brickHeight+brickPadding)+brickPadding,brickWidth,brickHeight,brickCol-y-1))
+    }
+}
 
-b = new Ball(0)
-b.draw();
+const ball = new Ball(-45,3);
 
-brick = new Brick(400,250,50,20);
+drawBricks = () => {
+    for(let i = 0; i<bricks.length; i++){
+        bricks[i].draw();
+    }
+}
+
 run = () => {
     ctx.clearRect(0,0,canvas.width,canvas.height);
-//    b.move([brick]);
-    b.draw();
-    brick.draw();
-//    requestAnimationFrame(run);
+    ball.move(bricks);
+    drawBricks();
+    requestAnimationFrame(run);
 }
 
 run();
