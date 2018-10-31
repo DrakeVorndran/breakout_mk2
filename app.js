@@ -18,9 +18,10 @@ b.draw();
 brick = new Brick(400,250,50,20);
 run = () => {
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    b.move([brick]);
+//    b.move([brick]);
+    b.draw();
     brick.draw();
-    requestAnimationFrame(run);
+//    requestAnimationFrame(run);
 }
 
 run();

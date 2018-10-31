@@ -1,6 +1,7 @@
 
 Ball = class{
     constructor(a){
+        this.numP = 8;
         this.angle=a;
         this.x = canvas.width/2;
         this.y = canvas.height/2;
@@ -10,9 +11,18 @@ Ball = class{
         this.r = 10;
         this.color = "blue";
         this.bound = []
-        for(let x = 0; x<360; x++){
-            this.bound.push({x: this.r * Math.cos(degToRad(x)), y: this.r * Math.sin(degToRad(x))})
+        this.calcBound();
+        console.log(this.bound)
+    }
+
+
+    calcBound(){
+        this.bound = []
+        for(let x = 0; x<this.numP; x++){
+            this.bound.push({x: Math.floor(this.r * Math.cos(degToRad((x/this.numP)*360)))+this.x, y: Math.floor(this.r * Math.sin(degToRad((x/this.numP)*360)))+this.y})
+            
         }
+        
     }
 
 
@@ -24,10 +34,7 @@ Ball = class{
         this.x+=this.vx;
         this.y+=this.vy;
 
-        this.bound = []
-        for(let x = 0; x<36; x++){
-            this.bound.push({x: this.r * Math.cos(degToRad(x*10))+this.x, y: this.r * Math.sin(degToRad(x*10))+this.y})
-        }
+        this.calcBound();
         for(let i = 0; i<bricks.length; i++){
             this.collision(bricks[i]);
         }
@@ -39,9 +46,7 @@ Ball = class{
         ctx.fillStyle = this.color;
         ctx.fill();
         ctx.closePath();
-        for(let x = 0; x<36; x++){
-            this.bound.push({x: this.r * Math.cos(degToRad(x*10))+this.x, y: this.r * Math.sin(degToRad(x*10))+this.y})
-        }
+
         for(let i in this.bound){
             ctx.fillStyle = "black";
             ctx.fillRect(this.bound[i].x,this.bound[i].y,1,1)
