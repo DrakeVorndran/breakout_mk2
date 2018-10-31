@@ -18,14 +18,14 @@ const brickHeight = 20;
 const brickWidth = 50;
 const brickPadding = 10;
 const brickRows = Math.floor(canvas.width/(brickWidth+brickPadding));
-const brickCol = Math.floor((canvas.height/(brickHeight+brickPadding))/2.5);
+//const brickCol = Math.floor((canvas.height/(brickHeight+brickPadding))/2.5);
+const brickCol = 1;
 const bricks = [];
 for(let x = 0; x<brickRows; x++){
     for(let y = 0; y<brickCol; y++){
         bricks.push(new Brick(x*(brickWidth+brickPadding)+brickPadding,y*(brickHeight+brickPadding)+brickPadding,brickWidth,brickHeight,brickCol-y-1))
     }
 }
-
 
 
 const paddleWidth = 100;
@@ -40,12 +40,24 @@ drawBricks = () => {
     }
 }
 
+let moreBricks = true;
+
 run = () => {
+    moreBricks = false;
     livesTag.innerHTML = "Lives: "+lives;
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ball.move(bricks,paddle);
     drawBricks();
     paddle.move();
+    if(lives<1){
+        alert("game over!")
+        document.location.reload();
+    }
+    if(! moreBricks){
+        alert("winner!")
+        document.location.reload();
+        
+    }
     requestAnimationFrame(run);
 }
 
