@@ -3,15 +3,20 @@ Ball = class{
     constructor(a,v){
         this.numP = 36;
         this.angle=a;
+        this.initialA = a;
         this.x = canvas.width/2;
         this.y = canvas.height/2;
-        this.v = 2;
-        this.vx = this.v * Math.cos(degToRad(this.angle));
-        this.vy = this.v * Math.sin(degToRad(this.angle));
+        this.v = v;
+        this.setV();
         this.r = 10;
         this.color = "blue";
         this.bound = []
         this.calcBound();
+    }
+
+    setV(){
+        this.vx = this.v * Math.cos(degToRad(this.angle));
+        this.vy = this.v * Math.sin(degToRad(this.angle));
     }
 
 
@@ -24,23 +29,23 @@ Ball = class{
 
     }
 
-    checkCollision(bricks){
+    checkCollision(bricks,paddle){
         this.wallCollision();
+        this.paddleCollide(paddle);
         for(let i = 0; i<bricks.length; i++){
             this.collision(bricks[i]);
         }
     }
 
 
-    move(bricks){
+    move(bricks,paddle){
 
-        this.vx = this.v * Math.cos(degToRad(this.angle));
-        this.vy = this.v * Math.sin(degToRad(this.angle));
+        this.setV();
+
         this.x+=this.vx;
         this.y+=this.vy;
         this.calcBound();
-        this.checkCollision(bricks);
-
+        this.checkCollision(bricks,paddle);
         this.draw()
 
     }
@@ -66,8 +71,15 @@ Ball = class{
 
         }
 
-        if(this.y+this.r>canvas.height || this.y-this.r<0){
+        if(this.y-this.r<0){
             this.angle*=-1;
+        }
+        if(this.y+this.r>canvas.height){
+            lives--;
+            this.angle=this.initialA;
+            this.x = canvas.width/2;
+            this.y = canvas.height/2;
+            this.setV();
         }
     }
 
@@ -101,6 +113,15 @@ Ball = class{
 
             }
 
+        }
+    }
+
+    paddleCollide(brick){
+        if(this.y+this.r>brick.y && this.x>brick.x && this.x<brick.x+brick.w){
+            this.angle*=-1;
+            this.angle+=brick.v;
+            this.y = brick.y-this.r
+            this.calcBound();
         }
     }
 

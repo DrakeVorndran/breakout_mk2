@@ -1,6 +1,7 @@
 const canvas = document.getElementById("canvas");
+const livesTag = document.getElementById("lives");
 const ctx = canvas.getContext("2d");
-
+let lives = 3;
 degToRad = (deg) => {
     let rad = ((deg*Math.PI)/180);
     return rad;
@@ -9,6 +10,8 @@ radToDeg = (rad) => {
     let deg = ((rad*180)/Math.PI);
     return deg;
 }
+
+
 
 
 const brickHeight = 20;
@@ -23,7 +26,13 @@ for(let x = 0; x<brickRows; x++){
     }
 }
 
-const ball = new Ball(-45,3);
+
+
+const paddleWidth = 100;
+const paddleHeight = 8;
+const paddleFloat = 5;
+const paddle = new Paddle(290,canvas.height-paddleHeight-paddleFloat,paddleWidth,paddleHeight);
+const ball = new Ball(-45,5);
 
 drawBricks = () => {
     for(let i = 0; i<bricks.length; i++){
@@ -32,9 +41,11 @@ drawBricks = () => {
 }
 
 run = () => {
+    livesTag.innerHTML = "Lives: "+lives;
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ball.move(bricks);
+    ball.move(bricks,paddle);
     drawBricks();
+    paddle.move();
     requestAnimationFrame(run);
 }
 
