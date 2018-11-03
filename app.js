@@ -31,7 +31,7 @@ const paddleWidth = 100;
 const paddleHeight = 8;
 const paddleFloat = 5;
 const paddle = new Paddle(290,canvas.height-paddleHeight-paddleFloat,paddleWidth,paddleHeight);
-const ball = new Ball(-45,5);
+const balls = [new Ball(-45,5)];
 
 drawBricks = () => {
     for(let i = 0; i<bricks.length; i++){
@@ -41,11 +41,17 @@ drawBricks = () => {
 
 let moreBricks = true;
 
+
+moveBalls = () => {
+    for(let i = 0; i<balls.length; i++){
+        balls[i].move(bricks,paddle);
+    }
+}
 run = () => {
     moreBricks = false;
     livesTag.innerHTML = "Lives: "+lives;
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ball.move(bricks,paddle);
+    moveBalls();
     drawBricks();
     paddle.move();
     if(lives<1){

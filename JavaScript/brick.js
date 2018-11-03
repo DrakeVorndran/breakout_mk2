@@ -1,6 +1,7 @@
 
 Brick = class{
     constructor(x,y,w,h,l){
+        this.shinyChance = .9;
         this.x = x;
         this.y = y;
         this.w = w;
@@ -10,6 +11,8 @@ Brick = class{
         this.colors = ["red","orange","yellow","green","blue","purple"]
         this.color = this.colors[this.l];
         this.solid = true;
+        this.shiny = false;
+        this.makeShiny();
 
         for(let x = this.x; x<this.x+this.w+1; x++){
             this.bound.push({ x: x, y: this.y});
@@ -30,6 +33,27 @@ Brick = class{
             this.color = this.colors[this.l];
             ctx.fillStyle = this.color;
             ctx.fillRect(this.x,this.y,this.w,this.h);
+            if(this.shiny){
+                ctx.fillStyle="#FFFFFFAA"
+                ctx.fillRect(this.x,this.y,this.w,this.h);
+            }
         }
+    }
+
+    makeShiny(){
+        if(Math.random()>this.shinyChance){
+            this.shiny = true;
+        }
+        else{
+            this.shiny = false;
+        }
+    }
+
+    hit(){
+        this.l--;
+        if(this.shiny){
+            balls.push(new Ball(-45, 5))
+        }
+        this.makeShiny();
     }
 }

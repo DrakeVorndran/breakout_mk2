@@ -30,12 +30,35 @@ Ball = class{
     }
 
     checkCollision(bricks,paddle){
+        this.ballCollision();
         this.wallCollision();
         this.paddleCollide(paddle);
         for(let i = 0; i<bricks.length; i++){
             this.collision(bricks[i]);
         }
     }
+
+    touching(ball){
+        let xDist = this.x-ball.x;
+        let yDist = this.y-ball.y;
+        if((xDist*xDist)+(yDist*yDist)<(this.r*2)*(this.r*2)){
+            return true;
+        }
+        return false;
+    }
+    ballCollision(){
+        for(let i = 0; i<balls.length; i++){
+            if(!(balls[i]===this)){
+                if(this.touching(balls[i])){
+                    let bounceA = Math.atan((balls[i].y-this.y)/(balls[i].x-this.x));
+                    let vector = ((bounceA+180)%360) - this.angle;
+                    this.angle = bounceA+vector;
+                }
+            }
+        }
+    }
+
+
 
 
     move(bricks,paddle){
@@ -75,11 +98,12 @@ Ball = class{
             this.angle*=-1;
         }
         if(this.y+this.r>canvas.height){
-            lives--;
-            this.angle=this.initialA;
-            this.x = canvas.width/2;
-            this.y = canvas.height/2;
-            this.setV();
+            let pos = balls.indexOf(this);
+            balls.splice(pos,1);
+            if(balls.length===0){
+                balls.push(new Ball(-45,5))
+                lives--;
+            }
         }
     }
 
@@ -101,7 +125,7 @@ Ball = class{
                 contact = points[Math.floor(points.length/2)]
             }
             if(contact!=undefined){
-                brick.l--;
+                brick.hit();
                 let bounceA = (contact.a+180)%360;
                 //            this.angle= bounceA;
                 //            console.log(this.vx*Math.cos(degToRad(bounceA)))
